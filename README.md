@@ -32,7 +32,7 @@ Conformément au cahier des charges (§3 et §4.3), **toutes les données sont c
 
 ### Étape 1 — Cloner le dépôt et compiler
 ```powershell
-git clone https://github.com/<votre-compte>/driveeasy-backend.git
+git clone https://github.com/omarmejri-bot/driveeasy-backend.git
 cd driveeasy-backend
 .\mvnw.cmd clean package
 ```
@@ -63,7 +63,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\stop-all.ps1
 2. **Config Server (8888)** :
    - Mode **GitHub** (par défaut, lit la configuration depuis le dépôt Git) :
      ```powershell
-     java -DCONFIG_GIT_URI=https://github.com/<votre-compte>/driveeasy-backend -jar config-server/target/config-server-1.0.0.jar
+     java -DCONFIG_GIT_URI=https://github.com/omarmejri-bot/driveeasy-backend -jar config-server/target/config-server-1.0.0.jar
      ```
    - Mode **local / hors-ligne** (lit le dossier `config-repo/`) :
      ```powershell
@@ -96,7 +96,7 @@ Chaque microservice embarque un `DataSeeder` (`CommandLineRunner`, désactivable
   - `id=3` (*Mohamed Gharbi*, `VIP` — remise 10 %) ;
   - `id=4` (*Sami Jebali*, **19 ans**) $\rightarrow$ **non éligible** (âge < 21 ans) ;
   - `id=5` (*Ines Mansour*, **permis expiré**) $\rightarrow$ **non éligible**.
-- **9 locations** couvrant tous les statuts (`TERMINEE`, `EN_COURS`, `RESERVEE`, `ANNULEE`), dont :
+- **10 locations** couvrant tous les statuts (`TERMINEE`, `EN_COURS`, `RESERVEE`, `ANNULEE`), dont :
   - `id=5` (`EN_COURS`, client 1, véhicule 2) : prête pour démontrer le retour et la promotion `FIDELE` ;
   - `id=6` (`EN_COURS`, client 2, véhicule 4, **en retard de 2 jours**) : prête pour démontrer le calcul automatique des pénalités ($1{,}5 \times \text{prixJournalier} \times \text{joursRetard}$) ;
   - `id=7` (`RESERVEE`, client 3, véhicule 7) : prête pour démontrer le départ (`PATCH /depart`) ou l'annulation (`PATCH /annulation`).
@@ -109,7 +109,7 @@ Chaque microservice embarque un `DataSeeder` (`CommandLineRunner`, désactivable
   ```powershell
   .\mvnw.cmd test
   ```
-- **Collection Postman** : importer `postman/DriveEasy.postman_collection.json` dans Postman (22 requêtes couvrant tous les cas nominaux et les erreurs `400`, `404`, `409`).
+- **Collection Postman** : importer `postman/DriveEasy.postman_collection.json` dans Postman (27 requêtes couvrant tous les cas nominaux et les erreurs `400`, `404`, `409`).
 - **Swagger UI** de chaque microservice :
   - http://localhost:8081/swagger-ui.html
   - http://localhost:8082/swagger-ui.html

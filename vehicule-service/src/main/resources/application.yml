@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: vehicule-service
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Port, Eureka, Zipkin et propriétés métier sont fournis par le Config Server
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}

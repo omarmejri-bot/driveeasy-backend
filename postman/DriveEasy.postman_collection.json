@@ -1,0 +1,219 @@
+{
+  "info": {
+    "name": "DriveEasy - API Microservices (via Gateway :8080)",
+    "_postman_id": "d4e1f9a0-2026-4b11-9c00-driveeasy0001",
+    "description": "Collection Postman complète couvrant tous les endpoints et codes HTTP (200, 201, 204, 400, 404, 409) de DriveEasy via l'API Gateway (port 8080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "gatewayUrl", "value": "http://localhost:8080" },
+    { "key": "configUrl", "value": "http://localhost:8888" }
+  ],
+  "item": [
+    {
+      "name": "0. Infrastructure (Eureka & Config Server)",
+      "item": [
+        {
+          "name": "Config Server - vehicule-service (profil dev)",
+          "request": { "method": "GET", "url": "{{configUrl}}/vehicule-service/dev" }
+        },
+        {
+          "name": "Config Server - location-service (profil prod)",
+          "request": { "method": "GET", "url": "{{configUrl}}/location-service/prod" }
+        },
+        {
+          "name": "Gateway Actuator Health",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/actuator/health" }
+        }
+      ]
+    },
+    {
+      "name": "1. vehicule-service (/api/vehicules)",
+      "item": [
+        {
+          "name": "GET /api/vehicules - Liste complète (200)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/vehicules" }
+        },
+        {
+          "name": "GET /api/vehicules - Filtres (catégorie=SUV, statut=DISPONIBLE, prixMax=200)",
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/api/vehicules?categorie=SUV&statut=DISPONIBLE&prixMax=200"
+          }
+        },
+        {
+          "name": "GET /api/vehicules/disponibles - Période (appel inter-services)",
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/api/vehicules/disponibles?dateDebut=2026-12-01&dateFin=2026-12-05"
+          }
+        },
+        {
+          "name": "GET /api/vehicules/1 - Détail (200)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/vehicules/1" }
+        },
+        {
+          "name": "GET /api/vehicules/999 - Introuvable (404)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/vehicules/999" }
+        },
+        {
+          "name": "POST /api/vehicules - Création valide (201)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"immatriculation\": \"240 TU 7788\",\n  \"marque\": \"Seat\",\n  \"modele\": \"Ibiza\",\n  \"annee\": 2024,\n  \"couleur\": \"Rouge\",\n  \"carburant\": \"ESSENCE\",\n  \"boite\": \"MANUELLE\",\n  \"nbPlaces\": 5,\n  \"kilometrage\": 4500,\n  \"prixJournalier\": 85.00,\n  \"statut\": \"DISPONIBLE\",\n  \"categorie\": \"COMPACTE\",\n  \"imageUrl\": \"https://cdn.imagin.studio/getImage?customer=img&make=seat&modelFamily=ibiza&angle=23\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/vehicules"
+          }
+        },
+        {
+          "name": "POST /api/vehicules - Immatriculation dupliquée (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"immatriculation\": \"201 TU 1234\",\n  \"marque\": \"Peugeot\",\n  \"modele\": \"208\",\n  \"annee\": 2023,\n  \"couleur\": \"Blanc\",\n  \"carburant\": \"ESSENCE\",\n  \"boite\": \"MANUELLE\",\n  \"nbPlaces\": 5,\n  \"kilometrage\": 1000,\n  \"prixJournalier\": 90.00,\n  \"categorie\": \"COMPACTE\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/vehicules"
+          }
+        },
+        {
+          "name": "POST /api/vehicules - Prix négatif / année future (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"immatriculation\": \"250 TU 0001\",\n  \"marque\": \"Peugeot\",\n  \"modele\": \"308\",\n  \"annee\": 2030,\n  \"carburant\": \"ESSENCE\",\n  \"boite\": \"MANUELLE\",\n  \"nbPlaces\": 5,\n  \"kilometrage\": 0,\n  \"prixJournalier\": -10,\n  \"categorie\": \"COMPACTE\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/vehicules"
+          }
+        },
+        {
+          "name": "DELETE /api/vehicules/2 - Refusé car véhicule LOUE (409)",
+          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/api/vehicules/2" }
+        }
+      ]
+    },
+    {
+      "name": "2. client-service (/api/clients)",
+      "item": [
+        {
+          "name": "GET /api/clients - Recherche (q=Ben Ali)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clients?q=Ben%20Ali" }
+        },
+        {
+          "name": "GET /api/clients/1/eligibilite - Client éligible (200)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clients/1/eligibilite" }
+        },
+        {
+          "name": "GET /api/clients/4/eligibilite - Client < 21 ans non éligible (200)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clients/4/eligibilite" }
+        },
+        {
+          "name": "GET /api/clients/5/eligibilite - Permis expiré non éligible (200)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/clients/5/eligibilite" }
+        },
+        {
+          "name": "DELETE /api/clients/1 - Refusé car location active (409)",
+          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/api/clients/1" }
+        }
+      ]
+    },
+    {
+      "name": "3. location-service (/api/locations)",
+      "item": [
+        {
+          "name": "GET /api/locations - Liste paginée",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/locations?page=0&size=10" }
+        },
+        {
+          "name": "GET /api/locations/5 - Détail enrichi (client + véhicule agrégés)",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/locations/5" }
+        },
+        {
+          "name": "POST /api/locations/simulation - Simulation tarifaire VIP + LUXE",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 3,\n  \"vehiculeId\": 9,\n  \"dateDebut\": \"2026-12-10\",\n  \"dateFinPrevue\": \"2026-12-13\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/locations/simulation"
+          }
+        },
+        {
+          "name": "POST /api/locations - Création réservation valide (201)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 2,\n  \"vehiculeId\": 5,\n  \"dateDebut\": \"2026-12-15\",\n  \"dateFinPrevue\": \"2026-12-18\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/locations"
+          }
+        },
+        {
+          "name": "POST /api/locations - Refusé client non éligible (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 4,\n  \"vehiculeId\": 1,\n  \"dateDebut\": \"2026-12-15\",\n  \"dateFinPrevue\": \"2026-12-18\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/locations"
+          }
+        },
+        {
+          "name": "POST /api/locations - Refusé véhicule en MAINTENANCE (409)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clientId\": 1,\n  \"vehiculeId\": 8,\n  \"dateDebut\": \"2026-12-15\",\n  \"dateFinPrevue\": \"2026-12-18\"\n}"
+            },
+            "url": "{{gatewayUrl}}/api/locations"
+          }
+        },
+        {
+          "name": "PATCH /api/locations/7/depart - Démarrage location (véhicule -> LOUE)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"kmDepart\": 5000\n}" },
+            "url": "{{gatewayUrl}}/api/locations/7/depart"
+          }
+        },
+        {
+          "name": "PATCH /api/locations/5/retour - Retour -> Client 1 promu FIDELE (5 locations)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"kmRetour\": 42350\n}" },
+            "url": "{{gatewayUrl}}/api/locations/5/retour"
+          }
+        },
+        {
+          "name": "PATCH /api/locations/6/retour - Retour en retard (calcul pénalité 1,5x)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"kmRetour\": 25600\n}" },
+            "url": "{{gatewayUrl}}/api/locations/6/retour"
+          }
+        },
+        {
+          "name": "GET /api/locations/statistiques - Tableau de bord",
+          "request": { "method": "GET", "url": "{{gatewayUrl}}/api/locations/statistiques" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: api-gateway
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  # Toute la configuration (port, routes, CORS, Eureka, Zipkin) vient du Config Server
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://localhost:8888}

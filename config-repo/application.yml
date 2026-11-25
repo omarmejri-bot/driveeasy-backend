@@ -1,0 +1,72 @@
+# =====================================================================
+#  Configuration COMMUNE à tous les services clients du Config Server
+#  (fusionnée avec {service}.yml puis {service}-{profil}.yml)
+# =====================================================================
+
+# --- Paramètres Eureka ---
+eureka:
+  client:
+    registry-fetch-interval-seconds: 3
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+    # Identifiant unique => permet plusieurs instances du même service (load balancing)
+    instance-id: ${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+
+# --- Actuator + Zipkin (traçage distribué via Micrometer Tracing / Brave) ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_URL:http://localhost:9411/api/v2/spans}
+
+# --- OpenFeign + Resilience4j (communication inter-services) ---
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            connect-timeout: 2000
+            read-timeout: 5000
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        # Les erreurs métier (404, 409, 400) ne sont pas des pannes
+        ignore-exceptions:
+          - tn.driveeasy.common.ApiException
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+# NB : Spring Boot 3.x ajoute automatiquement [traceId-spanId] dans chaque ligne de log

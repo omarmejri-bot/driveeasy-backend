@@ -1,0 +1,8 @@
+# ============ vehicule-service : profil DEV ============
+logging:
+  level:
+    tn.driveeasy: DEBUG
+management:
+  tracing:
+    sampling:
+      probability: 1.0

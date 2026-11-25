@@ -1,0 +1,17 @@
+# ============ client-service : configuration (tous profils) ============
+server:
+  port: ${PORT:8082}
+
+info:
+  app:
+    name: client-service
+    description: Gestion des clients et de la validité du permis de conduire
+    version: 1.0.0
+
+driveeasy:
+  store:
+    type: in-memory
+    seed-enabled: true
+  # --- Propriétés métier : règles d'éligibilité ---
+  eligibilite:
+    age-minimum: 21

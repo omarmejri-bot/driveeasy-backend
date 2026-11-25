@@ -1,0 +1,13 @@
+# =====================================================================
+#  DriveEasy - Docker Compose
+#  Conformément à la section 4.3 du cahier des charges, l'utilisation de
+#  bases de données est strictement interdite (stockage en RAM uniquement).
+#  Ce fichier démarre donc uniquement le serveur de traçage distribué Zipkin.
+# =====================================================================
+services:
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: driveeasy-zipkin
+    ports:
+      - "9411:9411"
+    restart: unless-stopped

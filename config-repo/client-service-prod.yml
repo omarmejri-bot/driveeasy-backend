@@ -1,0 +1,11 @@
+# ============ client-service : profil PROD ============
+logging:
+  level:
+    tn.driveeasy: INFO
+management:
+  tracing:
+    sampling:
+      probability: 0.1
+driveeasy:
+  store:
+    seed-enabled: false

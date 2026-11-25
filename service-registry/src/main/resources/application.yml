@@ -1,0 +1,22 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: service-registry
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # Le registre ne s'enregistre pas auprès de lui-même
+    register-with-eureka: false
+    # ... et ne récupère pas le registre (il EST le registre)
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # En développement : évite le mode "self-preservation" et rafraîchit le cache toutes les 3 s
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 5000
+    response-cache-update-interval-ms: 3000

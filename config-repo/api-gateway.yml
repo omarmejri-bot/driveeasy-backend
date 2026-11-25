@@ -1,0 +1,55 @@
+# ============ api-gateway : configuration (tous profils) ============
+server:
+  port: ${PORT:8080}
+
+info:
+  app:
+    name: api-gateway
+    description: Point d'entrée unique (routage, load balancing, CORS, filtres)
+    version: 1.0.0
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # --- CORS : autorise le frontend Angular ---
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origins:
+                  - http://localhost:4200
+                allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+                allowed-headers: "*"
+                exposed-headers: [X-Request-Id, X-Response-Time, X-Served-By, Location]
+                allow-credentials: true
+                max-age: 3600
+          # Évite les en-têtes CORS dupliqués si un service en ajoute aussi
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+          # --- Routes : lb:// = résolution via Eureka + load balancing (round-robin) ---
+          routes:
+            - id: vehicule-service
+              uri: lb://vehicule-service
+              predicates:
+                - Path=/api/vehicules/**
+              filters:
+                - StripPrefix=1
+            - id: client-service
+              uri: lb://client-service
+              predicates:
+                - Path=/api/clients/**
+              filters:
+                - StripPrefix=1
+            - id: location-service
+              uri: lb://location-service
+              predicates:
+                - Path=/api/locations/**
+              filters:
+                - StripPrefix=1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,refresh,gateway

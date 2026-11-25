@@ -1,0 +1,19 @@
+# ============ vehicule-service : configuration (tous profils) ============
+server:
+  port: ${PORT:8081}
+
+info:
+  app:
+    name: vehicule-service
+    description: Gestion du parc automobile, des catégories et de la disponibilité
+    version: 1.0.0
+
+# --- "Datasource" : la base de données étant interdite, on externalise
+#     la configuration du stockage en mémoire (RAM) ---
+driveeasy:
+  store:
+    type: in-memory
+    seed-enabled: true
+  # --- Propriétés métier ---
+  vehicule:
+    annee-minimum: 1990

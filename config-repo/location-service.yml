@@ -1,0 +1,30 @@
+# ============ location-service : configuration (tous profils) ============
+server:
+  port: ${PORT:8083}
+
+info:
+  app:
+    name: location-service
+    description: Cycle de vie des locations et orchestration inter-services
+    version: 1.0.0
+
+driveeasy:
+  store:
+    type: in-memory
+    seed-enabled: true
+  # --- Propriétés métier : tarification ---
+  tarification:
+    # Coefficient multiplicateur selon la catégorie du véhicule
+    coefficients:
+      ECONOMIQUE: 1.00
+      COMPACTE: 1.10
+      BERLINE: 1.20
+      SUV: 1.40
+      LUXE: 1.80
+    remise-fidele: 0.05      # 5 %
+    remise-vip: 0.10         # 10 %
+    coefficient-penalite: 1.5  # 1,5 x prix journalier par jour de retard
+  # --- Propriétés métier : fidélité ---
+  fidelite:
+    seuil-fidele: 5
+    seuil-vip: 15

@@ -1,0 +1,9 @@
+# ============ api-gateway : profil DEV ============
+logging:
+  level:
+    tn.driveeasy: DEBUG
+    org.springframework.cloud.gateway: INFO
+management:
+  tracing:
+    sampling:
+      probability: 1.0
